@@ -20,10 +20,11 @@ INSERT INTO customers (customer_id, customer_name, email,address) VALUES
 -- create table structure for orders
 CREATE TABLE IF NOT EXISTS orders (
   order_id INTEGER PRIMARY KEY  NOT NULL AUTOINCREMENT,
-  customer_id INTEGER FOREIGN KEY,
+  customer_id INTEGER,
   product_id INTEGER,
   order_date DATE,
-  total_amount FLOAT
+  total_amount FLOAT,
+  FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
 )
 
 INSERT INTO orders (customer_id, product_id, order_date, total_amount) VALUES
@@ -85,14 +86,16 @@ JOIN orders ON orders.customer_id = customers.customer_id
 WHERE orders.product_id = (SELECT product_id FROM products WHERE products.product_name = "A")
 
 -- Normalize the database by creating a separate table for order items and updating the orders table to reference the order_items table
-CREATE TABLE IF NOT EXISTS orderitems (
+CREATE TABLE IF NOT EXISTS order_items (
   orderitem_id INTEGER PRIMARY KEY  NOT NULL AUTOINCREMENT,
   order_id INTEGER,
   product_id INTEGER,
-  quantity INTEGER
+  quantity INTEGER,
+  FOREIGN KEY (order_id) REFERENCES orders(order_id),
+  FOREIGN KEY (product_id) REFERENCES products(product_id)
 )
 
-INSERT INTO orderitems (orderitem_id, order_id, product_id, quantity) VALUES
+INSERT INTO order_items (orderitem_id, order_id, product_id, quantity) VALUES
  (1, 1, 2, 3),
  (2, 2, 1, 1),
  (3, 3, 2, 1),
